@@ -1,0 +1,81 @@
+/*************************************************************************
+ * Caesar Encryptor.
+ * code by Destr0yd.
+ *
+ * usage: cipher <text> <key>
+ *
+ *************************************************************************
+ * size of pe: 41,2K
+ * gcc -v: 6.3.0 (mingw)
+ * gcc cipher.c -o cipher.exe
+ *************************************************************************/
+ 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+ 
+#define MAXMESSAGESIZE 256
+#define ENGLISHALPHABETLENGTH 26
+ 
+#define DEBUG 1
+ 
+typedef char* String;
+typedef unsigned int UINT;
+ 
+String EncryptMessage(char Message[], UINT Key);
+String EncryptMessage(char Message[], UINT Key)
+{
+    for(UINT i = 0; i < strlen(Message); i++)
+    {
+        #ifdef DEBUG
+        printf("symbol %c is going to be encrypted.\n", Message[i]);
+        #endif
+       
+        if(isalpha(Message[i]) == 0)
+        {
+            #ifdef DEBUG
+            printf("warning: symbol %c isn't a letter.\n\n", Message[i]);
+            #endif
+            continue;
+        }
+ 
+        else if(isalpha(Message[i] + Key) == 0)
+            Message[i] = (Message[i] - ENGLISHALPHABETLENGTH) + Key;    // x = (l - 26) + k
+                                                                        //
+        else Message[i] += Key;                                         // x = k + l
+    }
+ 
+    return Message;
+}
+ 
+int main(int argc, String argv[])   // third update, now no scanf only args
+{
+    long int UserKey;
+ 
+    if(argc < 3)
+    {
+        #ifdef DEBUG
+        printf("usage: cipher.exe <text> <key>");
+        #endif
+ 
+        exit(EXIT_FAILURE);
+    }
+ 
+    UserKey = atoi(argv[2]);       // second argument is a key, so we need integer
+//  UserMessage = argv[1];
+ 
+    printf("\nCaesar Cipher.\n\ntext - %s\nkey - %d", argv[1], UserKey);
+ 
+    if((UserKey <= 0) || (UserKey > 26))
+    {
+        #ifdef DEBUG
+        printf("\nerror: %d is a wrong key value.", UserKey);
+        #endif
+ 
+        exit(EXIT_FAILURE);
+    }
+ 
+    printf("\n"); puts(EncryptMessage(argv[1], UserKey));
+    return 0
+;}
